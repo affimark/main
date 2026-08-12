@@ -526,9 +526,13 @@ html[dir="rtl"] .btn:hover .arrow{translate:-4px 0;}
 /* ---------------------------------------------------------------------
    14. Scroll reveal
    --------------------------------------------------------------------- */
-.reveal{opacity:0;translate:0 16px;transition:opacity var(--dur-slow) var(--ease),translate var(--dur-slow) var(--ease);}
-.reveal.is-visible{opacity:1;translate:0 0;}
-@media (prefers-reduced-motion:reduce){.reveal{opacity:1;translate:0 0;}}
+/* Content is visible by default (no-JS / JS-broken safe). Only once main.js
+   confirms IntersectionObserver support does it arm the hidden-until-scrolled
+   animation, so a page can never end up with content stuck at opacity:0. */
+.reveal{opacity:1;translate:0 0;transition:opacity var(--dur-slow) var(--ease),translate var(--dur-slow) var(--ease);}
+html.js-reveal .reveal{opacity:0;translate:0 16px;}
+html.js-reveal .reveal.is-visible{opacity:1;translate:0 0;}
+@media (prefers-reduced-motion:reduce){html.js-reveal .reveal{opacity:1;translate:0 0;}}
 
 /* ---------------------------------------------------------------------
    15. Misc components

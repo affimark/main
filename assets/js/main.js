@@ -33,9 +33,12 @@
     });
   }
 
-  /* Scroll reveal */
+  /* Scroll reveal — arm the hidden-until-visible animation only once we
+     know JS + IntersectionObserver actually work, so content is never
+     stuck invisible if a script fails or JS is unavailable. */
   var revealEls = document.querySelectorAll(".reveal");
   if ("IntersectionObserver" in window && revealEls.length) {
+    document.documentElement.classList.add("js-reveal");
     var io = new IntersectionObserver(
       function (entries) {
         entries.forEach(function (entry) {
@@ -51,8 +54,6 @@
       el.style.transitionDelay = Math.min(i % 6, 5) * 60 + "ms";
       io.observe(el);
     });
-  } else {
-    revealEls.forEach(function (el) { el.classList.add("is-visible"); });
   }
 
   /* Contact form — client-side only (static hosting), no backend submission */
