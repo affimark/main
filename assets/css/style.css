@@ -204,8 +204,12 @@ html[dir="rtl"] .kicker{letter-spacing:0;}
 
 .site-header{
   position:sticky;top:0;z-index:100;
-  background:rgba(245,244,239,.92);
-  backdrop-filter:blur(10px);
+  /* Solid, not translucent+blurred: backdrop-filter creates a new CSS
+     containing block for any position:fixed descendant (the mobile
+     .main-nav drawer lives inside this header), which would otherwise
+     anchor the fullscreen drawer to the header's box instead of the
+     viewport. */
+  background:var(--paper);
   border-bottom:var(--border-w) solid var(--line);
 }
 .site-header__inner{
@@ -215,7 +219,7 @@ html[dir="rtl"] .kicker{letter-spacing:0;}
 .brand{display:flex;align-items:center;flex:none;}
 .brand__logo{height:34px;width:auto;}
 
-.main-nav ul{display:flex;align-items:center;gap:var(--sp-lg);}
+.main-nav > ul{display:flex;align-items:center;gap:var(--sp-lg);}
 .main-nav > ul > li > a{
   font-size:var(--fs-sm);font-weight:500;color:var(--ink);
   padding-block:.5rem;position:relative;
@@ -267,15 +271,23 @@ html[dir="rtl"] .kicker{letter-spacing:0;}
     position:fixed;inset-block:0;inset-inline-end:0;width:min(340px,86vw);
     background:var(--navy-900);color:var(--paper);
     padding:5.5rem var(--sp-lg) var(--sp-lg);
-    translate:100% 0;transition:translate var(--dur-slow) var(--ease);
+    /* inset-inline-end:0 above auto-flips to the physical left edge in RTL;
+       --nav-closed-x flips the physical (non-logical) translate to match,
+       via a custom property rather than a directional selector, so it never
+       fights the .is-open specificity below regardless of dir. */
+    translate:var(--nav-closed-x, 100%) 0;transition:translate var(--dur-slow) var(--ease);
     overflow-y:auto;
   }
-  html[dir="rtl"] .main-nav{inset-inline-end:auto;inset-inline-start:0;translate:-100% 0;}
+  html[dir="rtl"]{--nav-closed-x:-100%;}
   .main-nav.is-open{translate:0 0;}
-  .main-nav ul{flex-direction:column;align-items:stretch;gap:0;}
+  .main-nav > ul{flex-direction:column;align-items:stretch;gap:0;}
   .main-nav > ul > li{border-block-end:1px solid rgba(245,244,239,.14);}
   .main-nav > ul > li > a{display:block;padding-block:1rem;color:var(--paper);}
   .main-nav > ul > li > a::after{display:none;}
+  /* The desktop is-active color (navy-900) would be unreadable against this
+     panel's own navy-900 background, so the current-page item is
+     highlighted in brass here instead. */
+  .main-nav > ul > li.is-active > a{color:var(--brass-light);}
   .sub-nav{
     position:static;opacity:1;visibility:visible;translate:0;
     background:transparent;border:0;box-shadow:none;padding-inline-start:1rem;display:none;
